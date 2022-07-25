@@ -1,6 +1,5 @@
 // TO DO:
-// create series of on-click prompts
-
+// Make Condiitonal Statements Work (Respond to Prompts)
 
 // Query selector for the button
 var generateBtn = document.querySelector("#generate");
@@ -18,6 +17,7 @@ var uppercaseLetters = lowercaseLetters.map(letter => letter.toUpperCase());
 // Random Index: 2
 // a, b, 9, d, e, f, f, h
 
+// Function to generate password
 function generateRandom(arr) {
   let randomValue = arr[Math.floor(Math.random() * arr.length)];
 
@@ -29,10 +29,11 @@ function generateRandom(arr) {
   };
 }
 
+// Conditional Statements
 var createPassword = (length, hasNumbers, hasSymbols, hasLowercase, hasUppercase) =>{
   var availableCharacters = [
-    // ...(hasSymbols ? symbols : []),
-    // ...(hasNumbers ? numbers : []),
+    //...(hasSymbols ? symbols : []),
+    ...(hasNumbers ? numbers : []), 
     ...(hasLowercase ? lowercaseLetters : []),
     ...(hasUppercase ? uppercaseLetters : []),
   ];
@@ -65,7 +66,7 @@ var createPassword = (length, hasNumbers, hasSymbols, hasLowercase, hasUppercase
     hiddenPassword = hiddenPassword.join("");
   }
   if (hasUppercase) {
-    var { randomIndex, randomValue } = generateRandom(lowercaseLetters); // { randomIndex, randomValue }
+    var { randomIndex, randomValue } = generateRandom(uppercaseLetters); // { randomIndex, randomValue }
     hiddenPassword = hiddenPassword.split("");
     hiddenPassword[randomIndex] = randomValue
     hiddenPassword = hiddenPassword.join("");
@@ -74,14 +75,14 @@ var createPassword = (length, hasNumbers, hasSymbols, hasLowercase, hasUppercase
   return hiddenPassword;
 }
 
-// Function to generate password
+// Function to generate prompts
 function generatePassword() {
   var lengthChar = prompt("Please enter a password length between 8 and 128");
   
 
   if(!lengthChar ) {
     alert("You must enter a value");
-  } else if (lengthChar < 8 || lengthChar > 128){
+  } else if (isNaN(lengthChar) || lengthChar < 8 || lengthChar > 128){
     alert("Password must be between 8 and 128!");
   } else {
     var confirmNum = confirm("Do you want numbers in your password?");
@@ -92,14 +93,22 @@ function generatePassword() {
   
   if (lengthChar > 8 && lengthChar < 128 && !confirmNum && !confirmUpper && !confirmLower && !confirmSpecial) {
     alert("You must choose at least one criteria!");
+    // All 4 criteria is clicked
   } else if (confirmNum && confirmUpper && confirmLower && confirmSpecial) {
-    return  createPassword(lengthChar, confirmNum, confirmUpper, confirmLower, confirmSpecial);
-  } else if (!confirmNum && confirmUpper && confirmLower && confirmSpecial) {
-    return createPassword(lengthChar, !confirmNum, confirmUpper, confirmLower, confirmSpecial);
-  // } else if (confirmNum && !confirmUpper && confirmLower && confirmSpecial) {
-  //   return createPassword(lengthChar, confirmNum, !confirmUpper, confirmLower, confirmSpecial);
-  }
-}
+    return  createPassword(lengthChar, numbers, uppercaseLetters, lowercaseLetters, symbols);
+   // No Numbers
+  } else if (confirmUpper && confirmLower && confirmSpecial) {
+    return createPassword(lengthChar, uppercaseLetters, lowercaseLetters, symbols);
+    // No Uppercase
+  } else if (confirmNum && confirmLower && confirmSpecial) {
+    return createPassword(lengthChar, numbers, lowercaseLetters, symbols);
+    // No Lowercase
+  } else if (confirmNum && confirmUpper && confirmSpecial) {
+    return createPassword(lengthChar, numbers, uppercaseLetters, symbols);
+    // No Symbols
+  } else if (confirmNum && confirmUpper && confirmLower) {
+    return createPassword(lengthChar, numbers, uppercaseLetters, lowercaseLetters);
+}}
 
 // Write password to the #password input
 function writePassword() {
