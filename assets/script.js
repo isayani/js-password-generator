@@ -1,6 +1,3 @@
-// TO DO:
-// Make Condiitonal Statements Work (Respond to Prompts)
-
 // Query selector for the button
 var generateBtn = document.querySelector("#generate");
 
@@ -11,17 +8,11 @@ var characterCodes = Array.from(Array(26)).map((_,i) => i +97);
 var lowercaseLetters = characterCodes.map(code => String.fromCharCode(code));
 var uppercaseLetters = lowercaseLetters.map(letter => letter.toUpperCase());
 
-// Generate 8 random from 26 alphabetical letters => [a, b, c, d, e, f, f, h]
-// if any of the boolean like hasNumber, hasSymbols is true, then replace a random index in the above password
-// Example: hasNumbers = random number (9)
-// Random Index: 2
-// a, b, 9, d, e, f, f, h
-
-// Function to generate password
+// Function to generate random password
 function generateRandom(arr) {
   let randomValue = arr[Math.floor(Math.random() * arr.length)];
 
-  var randomIndex = Math.floor(Math.random() * arr.length); // 2
+  var randomIndex = Math.floor(Math.random() * arr.length);
 
   return {
     randomValue,
@@ -29,10 +20,10 @@ function generateRandom(arr) {
   };
 }
 
-// Conditional Statements
+// Conditional Parameters
 var createPassword = (length, hasNumbers, hasSymbols, hasLowercase, hasUppercase) =>{
   var availableCharacters = [
-    //...(hasSymbols ? symbols : []),
+    ...(hasSymbols ? symbols : []),
     ...(hasNumbers ? numbers : []), 
     ...(hasLowercase ? lowercaseLetters : []),
     ...(hasUppercase ? uppercaseLetters : []),
@@ -47,35 +38,10 @@ var createPassword = (length, hasNumbers, hasSymbols, hasLowercase, hasUppercase
     hiddenPassword += availableCharacters[randomIndex];
   }
 
-  if (hasSymbols) {
-    var { randomIndex, randomValue } = generateRandom(symbols); // { randomIndex, randomValue }
-    hiddenPassword = hiddenPassword.split("");
-    hiddenPassword[randomIndex] = randomValue
-    hiddenPassword = hiddenPassword.join("");
-  }
-  if (hasNumbers) {
-    var { randomIndex, randomValue } = generateRandom(numbers); // { randomIndex, randomValue }
-    hiddenPassword = hiddenPassword.split("");
-    hiddenPassword[randomIndex] = randomValue
-    hiddenPassword = hiddenPassword.join("");
-  }
-  if (hasLowercase) {
-    var { randomIndex, randomValue } = generateRandom(lowercaseLetters); // { randomIndex, randomValue }
-    hiddenPassword = hiddenPassword.split("");
-    hiddenPassword[randomIndex] = randomValue
-    hiddenPassword = hiddenPassword.join("");
-  }
-  if (hasUppercase) {
-    var { randomIndex, randomValue } = generateRandom(uppercaseLetters); // { randomIndex, randomValue }
-    hiddenPassword = hiddenPassword.split("");
-    hiddenPassword[randomIndex] = randomValue
-    hiddenPassword = hiddenPassword.join("");
-  }
-
   return hiddenPassword;
 }
 
-// Function to generate prompts
+// Function to generate prompts and password with parameters
 function generatePassword() {
   var lengthChar = prompt("Please enter a password length between 8 and 128");
   
@@ -93,21 +59,8 @@ function generatePassword() {
   
   if (lengthChar > 8 && lengthChar < 128 && !confirmNum && !confirmUpper && !confirmLower && !confirmSpecial) {
     alert("You must choose at least one criteria!");
-    // All 4 criteria is clicked
-  } else if (confirmNum && confirmUpper && confirmLower && confirmSpecial) {
-    return  createPassword(lengthChar, numbers, uppercaseLetters, lowercaseLetters, symbols);
-   // No Numbers
-  } else if (confirmUpper && confirmLower && confirmSpecial) {
-    return createPassword(lengthChar, uppercaseLetters, lowercaseLetters, symbols);
-    // No Uppercase
-  } else if (confirmNum && confirmLower && confirmSpecial) {
-    return createPassword(lengthChar, numbers, lowercaseLetters, symbols);
-    // No Lowercase
-  } else if (confirmNum && confirmUpper && confirmSpecial) {
-    return createPassword(lengthChar, numbers, uppercaseLetters, symbols);
-    // No Symbols
-  } else if (confirmNum && confirmUpper && confirmLower) {
-    return createPassword(lengthChar, numbers, uppercaseLetters, lowercaseLetters);
+  } else {
+    return  createPassword(lengthChar, confirmNum, confirmSpecial, confirmLower, confirmUpper);
 }}
 
 // Write password to the #password input
@@ -119,5 +72,5 @@ function writePassword() {
   passwordText.value = password;
 }
 
-// Add event listener to generate button
+// Add event listener to generate function on button click
 generateBtn.addEventListener("click", writePassword);
